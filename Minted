@@ -1,0 +1,61 @@
+#!/bin/bash
+# Minted Tool - A modular script menu system for Mint
+
+# Enable nullglob for pattern expansion
+shopt -s nullglob
+
+# Pause function to prompt user for continuation
+pause(){
+  read -p "Press [ENTER] key to continue" fakeenter
+}
+
+# Function to assign modules (scripts) from the 'modules' folder
+assignmodules(){
+    set -- modules/*
+    modules=(0 "${@/#./modules/}")
+    unset 'modules[0]'
+    declare -p modules # Optionally show result for debugging
+}
+
+# Menu display function
+menu(){
+echo -e " ███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████"
+echo -e "  __  __ _  ____  ____  ____  _  _  ____  ____  ____ "
+echo -e " (  )(  ( \\(_  _)(  __)(  __)( \/ )(  __)(  __)(  __)"
+echo -e " / /  /    /  )(   ) _)  ) _)  / \/ \\ ) _)  ) _)  ) _) "
+echo -e " \\_)(_(__)\\_)__) (____)(____)(_)(_)(_(__) (____)(____)"
+echo -e " ███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████"
+echo -e "by nobody65534"
+echo -e ""
+
+
+(( i % 2 )) && echo
+
+echo -e "\e[0m"
+}
+
+# Assign modules (scripts) from the 'modules' folder
+assignmodules
+
+# Read user options and execute selected module
+read_options(){
+echo "Choose a module to run:"
+select module in $(ls ./modules)
+do
+    if [ -f "./modules/$module" ]; then
+        echo "Running $module..."
+        ./modules/$module
+        break
+    else
+        echo "Invalid option. Please try again."
+    fi
+done
+}
+
+# Main loop to display menu and read options
+while true
+do
+	clear
+	menu
+	read_options
+done
