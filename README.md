@@ -3,7 +3,7 @@ Minted is a tool for Linux Mint, primarily for the cyberpatriot program.
 
 Installation: 
 ```
-sudo git clone 
+sudo git clone https://github.com/VillansRule/Minted.git
 ```
 ```
 chmod 755 Minted
