@@ -1,13 +1,21 @@
 #!/bin/bash
-# secure_ssh.sh
 
-# Edit SSH configuration for security
-echo "Securing SSH configuration..."
-sudo sed -i 's/^PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-sudo sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
-sudo sed -i 's/^PermitEmptyPasswords.*/PermitEmptyPasswords no/' /etc/ssh/sshd_config
+# Ensure that the user has sudo privileges to modify the SSH configuration
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root (e.g., sudo ./script.sh)"
+  exit
+fi
 
-# Restart SSH service
-sudo systemctl restart ssh
+# Modify the SSH configuration
+sed -i 's/^LoginGraceTime .*/LoginGraceTime 60/' /etc/ssh/sshd_config
+sed -i 's/^PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config
+sed -i 's/^Protocol .*/Protocol 2/' /etc/ssh/sshd_config
+sed -i 's/^#PermitEmptyPasswords .*/PermitEmptyPasswords no/' /etc/ssh/sshd_config
+sed -i 's/^PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^X11Forwarding .*/X11Forwarding no/' /etc/ssh/sshd_config
 
-echo "SSH has been secured."
+# Restart SSH service to apply changes
+systemctl restart ssh
+
+# Prompt for user input to continue
+read -p "Press [ENTER] key to continue"
